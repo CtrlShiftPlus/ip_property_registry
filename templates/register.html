@@ -2,7 +2,13 @@
 <html>
 <head>
     <title>Register Property</title>
+
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Freighter API -->
+    <script src="https://unpkg.com/@stellar/freighter-api/dist/index.js"></script>
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -11,13 +17,10 @@
             --surface: #111318;
             --surface2: #161a22;
             --border: #1e2330;
-            --border-hover: #2e3545;
             --accent: #c8a96e;
             --accent2: #7eb8c9;
             --text: #e8e4dc;
             --muted: #6b7080;
-            --glow: rgba(200, 169, 110, 0.12);
-            --error: #e07070;
         }
 
         body {
@@ -28,281 +31,168 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 70% 50% at 10% 20%, rgba(126, 184, 201, 0.05) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 60% at 90% 80%, rgba(200, 169, 110, 0.07) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
         }
 
         .card {
-            position: relative;
-            z-index: 10;
             background: var(--surface);
             border: 1px solid var(--border);
             width: 100%;
             max-width: 580px;
-            padding: 48px 52px;
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 10px;
-            letter-spacing: 0.3em;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            padding: 6px 14px;
-            border: 1px solid rgba(200,169,110,0.25);
-            background: rgba(200,169,110,0.05);
-        }
-
-        .header-badge::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: blink 2s ease infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
+            padding: 48px;
         }
 
         h2 {
             font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            font-size: 38px;
-            letter-spacing: -0.01em;
-            line-height: 1.1;
-            color: var(--text);
+            margin-bottom: 25px;
         }
 
-        h2 span { color: var(--accent); }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
+        .form-group { margin-bottom: 18px; }
 
         label {
-            display: block;
-            font-size: 10px;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
+            font-size: 11px;
             color: var(--muted);
-            margin-bottom: 10px;
-            font-weight: 600;
         }
 
-        input[type="text"],
-        textarea {
+        input, textarea {
             width: 100%;
+            padding: 12px;
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 15px;
-            padding: 14px 16px;
-            outline: none;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-            letter-spacing: 0.02em;
         }
 
-        input[type="text"]:focus,
-        textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(200,169,110,0.08);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 110px;
-        }
-
-        .wallet-field {
-            position: relative;
-        }
-
-        .wallet-field input {
-            font-size: 12px;
-            letter-spacing: 0.04em;
-            color: var(--accent2);
-            padding-right: 50px;
-        }
-
-        .wallet-icon {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted);
-            font-size: 16px;
-        }
-
-        .field-note {
-            margin-top: 6px;
-            font-size: 11px;
-            color: var(--muted);
-            letter-spacing: 0.04em;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
-            margin: 32px 0;
-        }
-
-        button[type="submit"] {
+        button {
             width: 100%;
-            padding: 16px;
-            background: transparent;
+            padding: 14px;
             border: 1px solid var(--accent);
+            background: transparent;
             color: var(--accent);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
             cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            overflow: hidden;
+            margin-top: 10px;
         }
 
-        button[type="submit"]::before {
-            content: '';
-            position: absolute;
-            inset: 0;
+        button:hover {
             background: var(--accent);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.35s ease;
+            color: black;
         }
 
-        button[type="submit"]:hover::before { transform: scaleX(1); }
-
-        button[type="submit"]:hover {
-            color: var(--bg);
-            box-shadow: 0 0 30px rgba(200,169,110,0.2);
+        .connect-btn {
+            border-color: var(--accent2);
+            color: var(--accent2);
         }
 
-        button[type="submit"] span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 24px;
-            color: var(--muted);
-            text-decoration: none;
+        .status {
+            margin-top: 10px;
             font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            transition: color 0.2s ease;
+            color: var(--muted);
         }
 
-        .back-link:hover { color: var(--accent); }
-
-        /* Corner decorations */
-        .corner {
-            position: fixed;
-            width: 36px;
-            height: 36px;
+        .status.success {
+            color: #7eb8c9;
         }
-        .corner--tl { top: 20px; left: 20px; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
-        .corner--tr { top: 20px; right: 20px; border-top: 1px solid var(--border); border-right: 1px solid var(--border); }
-        .corner--bl { bottom: 20px; left: 20px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); }
-        .corner--br { bottom: 20px; right: 20px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+
+        .status.error {
+            color: #e07070;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="corner corner--tl"></div>
-<div class="corner corner--tr"></div>
-<div class="corner corner--bl"></div>
-<div class="corner corner--br"></div>
-
 <div class="card">
-    <div class="header">
-        <div class="header-badge">On-Chain Registration</div>
-        <h2>Register <span>Intellectual</span><br>Property</h2>
-    </div>
+    <h2>Register Intellectual Property</h2>
 
-    <form action="/register_ip" method="POST">
+    <!-- Connect Wallet -->
+    <button type="button" class="connect-btn" onclick="connectWallet()">
+        Connect Freighter Wallet
+    </button>
+
+    <div id="status" class="status"></div>
+
+    <form id="ipForm" action="/register_ip" method="POST">
 
         <div class="form-group">
             <label>Title</label>
-            <input type="text" name="title" required>
+            <input type="text" id="title" name="title" required>
         </div>
 
         <div class="form-group">
             <label>Description</label>
-            <textarea name="description" required></textarea>
+            <textarea id="desc" name="description" required></textarea>
         </div>
 
         <div class="form-group">
-            <label>Freighter Public Wallet Address</label>
-            <div class="wallet-field">
-                <input type="text" name="wallet"
-                    value="GDJR46BAXA5L2IRP2FTTEGG3TKGRXDU6WUZHXKEE7MOPDXKYWV4ROBR6"
-                    required>
-                <span class="wallet-icon">◈</span>
-            </div>
-            <p class="field-note">Stellar public key — will be recorded on-chain</p>
+            <label>Wallet Address</label>
+            <input type="text" id="wallet" name="wallet" required>
         </div>
 
-        <div class="divider"></div>
-
-        <button type="submit"><span>⟡ Register on Blockchain</span></button>
+        <button type="button" onclick="registerIP()">
+            Register on Blockchain
+        </button>
 
     </form>
-
-    <a href="/" class="back-link">← Back Home</a>
 </div>
+
+<script>
+async function connectWallet() {
+    const status = document.getElementById("status");
+
+    try {
+        if (!window.freighterApi) {
+            status.className = "status error";
+            status.innerText =
+`
+Install Freighter Wallet for smooth Registration!
+Steps to fix:
+1. Install Freighter Wallet from Chrome Web Store
+2. Open the extension
+3. Create or import a wallet
+4. Copy your Public Key (starts with G...)
+5. Refresh this page and try again`;
+
+            return;
+        }
+
+        const access = await window.freighterApi.requestAccess();
+
+        if (access.error) {
+            status.className = "status error";
+            status.innerText =
+`❌ Permission denied
+
+Click "Connect Wallet" again and approve access in Freighter.`;
+            return;
+        }
+
+        const address = await window.freighterApi.getPublicKey();
+
+        document.getElementById("wallet").value = address;
+
+        status.className = "status success";
+        status.innerText =
+`✅ Connected!
+
+Your Wallet Address:
+${address}`;
+
+    } catch (err) {
+        console.error(err);
+        status.className = "status error";
+        status.innerText = "Error connecting wallet.";
+    }
+}
+
+async function registerIP() {
+    const wallet = document.getElementById("wallet").value;
+
+    if (!wallet) {
+        alert("Please connect your Freighter wallet first");
+        return;
+    }
+
+    document.getElementById("ipForm").submit();
+}
+</script>
 
 </body>
 </html>

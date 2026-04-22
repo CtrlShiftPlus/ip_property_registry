@@ -1,28 +1,47 @@
 async function connectWallet() {
-    if (!window.freighter) {
-        alert("Install Freighter Wallet");
-        return;
+    try {
+        // Check if Freighter is installed
+        if (!window.freighterApi) {
+            alert("Install Freighter Wallet");
+            return null;
+        }
+
+        // Request permission
+        const access = await window.freighterApi.requestAccess();
+
+        if (access.error) {
+            alert("Access denied");
+            return null;
+        }
+
+        // Get public key
+        const address = await window.freighterApi.getPublicKey();
+
+        // IMPORTANT: set value (not innerText)
+        document.getElementById("wallet").value = address;
+
+        return address;
+
+    } catch (err) {
+        console.error(err);
+        alert("Error connecting wallet");
+        return null;
     }
-
-    const isAllowed = await window.freighter.isAllowed();
-    if (!isAllowed) {
-        await window.freighter.setAllowed();
-    }
-
-    const address = await window.freighter.getPublicKey();
-
-    document.getElementById("wallet").innerText = address;
-
-    return address;
 }
+
 
 async function registerIP() {
     const title = document.getElementById("title").value;
     const desc = document.getElementById("desc").value;
 
-    const address = await connectWallet();
+    let address = document.getElementById("wallet").value;
 
-    alert("Simulated: IP registered by " + address);
+    // If wallet not connected, connect now
+    if (!address) {
+        address = await connectWallet();
+        if (!address) return;
+    }
 
-    // Real transaction integration can be added later
+    // Submit form to Flask
+    document.querySelector("form").submit();
 }
