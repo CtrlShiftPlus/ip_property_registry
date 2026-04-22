@@ -1,0 +1,1 @@
+D:\College\Project\Blockchain\ip_registry_project\blockchain\hello-world\target\wasm32v1-none\release\hello_world.wasm: D:\College\Project\Blockchain\ip_registry_project\blockchain\hello-world\src\lib.rs
